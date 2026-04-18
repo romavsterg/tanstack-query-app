@@ -12,8 +12,8 @@ const HomePage = () => {
 						ShopDemo — товары, которые хочется забрать домой
 					</h1>
 					<p className='mt-4 text-[1.1rem] leading-relaxed text-slate-500'>
-						Теплые цвета, аккуратные формы и приятные цены. Выбирайте, сохраняйте в избранное
-						и возвращайтесь за вдохновением каждый день.
+						Теплые цвета, аккуратные формы и приятные цены. Выбирайте,
+						сохраняйте в избранное и возвращайтесь за вдохновением каждый день.
 					</p>
 					<div className='mt-6 flex flex-wrap gap-3'>
 						<Link
@@ -72,19 +72,25 @@ const HomePage = () => {
 
 			<div className='mx-auto mt-14 grid w-[min(1120px,calc(100%-32px))] gap-4 sm:grid-cols-2 lg:grid-cols-3'>
 				<div className='min-h-[160px] rounded-[18px] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,255,255,0.85)] p-5 shadow-[0_16px_30px_-24px_rgba(15,23,42,0.3)]'>
-					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>Любимые бренды</h3>
+					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>
+						Любимые бренды
+					</h3>
 					<p className='mt-2 text-sm leading-relaxed text-slate-500'>
 						Подборка вещей, которые выглядят дорого и служат долго.
 					</p>
 				</div>
 				<div className='min-h-[160px] rounded-[18px] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,255,255,0.85)] p-5 shadow-[0_16px_30px_-24px_rgba(15,23,42,0.3)]'>
-					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>Стили по настроению</h3>
+					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>
+						Стили по настроению
+					</h3>
 					<p className='mt-2 text-sm leading-relaxed text-slate-500'>
 						Найдите капсулы, которые подходят под ваш ритм и сезон.
 					</p>
 				</div>
 				<div className='min-h-[160px] rounded-[18px] border border-[rgba(15,23,42,0.08)] bg-[rgba(255,255,255,0.85)] p-5 shadow-[0_16px_30px_-24px_rgba(15,23,42,0.3)]'>
-					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>Подарочная упаковка</h3>
+					<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>
+						Подарочная упаковка
+					</h3>
 					<p className='mt-2 text-sm leading-relaxed text-slate-500'>
 						Готовим покупки так, чтобы приятно было дарить.
 					</p>

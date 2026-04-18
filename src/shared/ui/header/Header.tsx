@@ -39,6 +39,12 @@ const Header = () => {
 					>
 						Каталог
 					</Link>
+					<Link
+						to='/manage-products'
+						className='relative pb-1 transition-colors hover:text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[2px] after:w-full after:origin-left after:scale-x-0 after:bg-[#ff6b35] after:transition-transform hover:after:scale-x-100'
+					>
+						Управление продуктами
+					</Link>
 				</nav>
 				<div className='flex items-center gap-3'>
 					{isSuccess ? (

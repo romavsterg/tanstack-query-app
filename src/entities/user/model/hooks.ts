@@ -5,7 +5,6 @@ import {
 	removeAccessToken,
 	saveAccessToken,
 } from '../../../shared/utils/accessToken';
-import { AxiosError } from 'axios';
 import { reqAuthRetries } from '../../../shared/utils/api';
 
 export const useRegister = () =>

@@ -2,7 +2,7 @@
 import ProductCard from '../../../shared/ui/productCard/ProductCard';
 
 const ProductsList = () => {
-	const { data: products, isLoading, error, isError } = useGetAllProducts();
+	const { data: products, isLoading, error, isError } = useGetAllProducts({});
 
 	if (isLoading) {
 		return (
@@ -20,7 +20,8 @@ const ProductsList = () => {
 	if (isError) {
 		return (
 			<div className='rounded-2xl border border-dashed border-[rgba(255,107,53,0.5)] bg-white/80 p-6 text-slate-900'>
-				Не удалось открыть каталог. {error?.message ?? 'Пожалуйста, попробуйте позже.'}
+				Не удалось открыть каталог.{' '}
+				{error?.message ?? 'Пожалуйста, попробуйте позже.'}
 			</div>
 		);
 	}

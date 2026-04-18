@@ -24,7 +24,9 @@ const ProductCard = ({ product }: Props) => {
 			<span className='w-fit rounded-full bg-[rgba(27,153,139,0.12)] px-3 py-1 text-xs font-semibold text-[#1b998b]'>
 				{product.isPublic ? 'В наличии' : 'Скоро снова'}
 			</span>
-			<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>{product.name}</h3>
+			<h3 className='text-[1.05rem] font-semibold text-[#0f172a]'>
+				{product.name}
+			</h3>
 			<div className='text-[1.35rem] font-bold text-[#e64a19]'>
 				{formatPrice(product.price)}
 			</div>

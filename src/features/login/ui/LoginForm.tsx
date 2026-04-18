@@ -31,7 +31,7 @@ const LoginForm = () => {
 			clearFormDraft('login');
 			navigate('/');
 		} catch {
-			// Errors are displayed below the form.
+			void 0;
 		}
 	};
 

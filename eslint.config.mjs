@@ -8,6 +8,9 @@ import globals from 'globals';
 import tseslint from 'typescript-eslint';
 
 export default [
+  {
+    ignores: ['dist', 'build'],
+  },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {

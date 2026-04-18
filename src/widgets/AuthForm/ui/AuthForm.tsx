@@ -20,7 +20,9 @@ const AuthForm = ({ title, subtitle, footer, children }: AuthFormProps) => {
 							{title}
 						</h2>
 						{subtitle ? (
-							<p className='text-sm leading-relaxed text-slate-500'>{subtitle}</p>
+							<p className='text-sm leading-relaxed text-slate-500'>
+								{subtitle}
+							</p>
 						) : null}
 					</div>
 					{children}

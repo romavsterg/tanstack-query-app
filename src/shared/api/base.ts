@@ -1,6 +1,7 @@
 import axios, { AxiosError } from 'axios';
-import { getAccessToken } from '../utils/accessToken';
+import { getAccessToken, saveAccessToken } from '../utils/accessToken';
 import { refreshToken } from '../../entities/user/api';
+import { objectToCamel, objectToSnake } from 'ts-case-convert';
 
 export const api = axios.create({
 	baseURL: import.meta.env.VITE_API_URL,
@@ -12,7 +13,17 @@ export const authApi = axios.create({
 	withCredentials: true,
 });
 
+api.interceptors.response.use(res => {
+	return res;
+});
+
 api.interceptors.request.use(config => {
+	if (config.data) {
+		config.data = objectToSnake(config.data);
+	}
+	if (config.params) {
+		config.params = objectToSnake(config.params);
+	}
 	if (getAccessToken())
 		config.headers.Authorization = `Bearer ${getAccessToken()}`;
 
@@ -20,7 +31,13 @@ api.interceptors.request.use(config => {
 });
 
 api.interceptors.response.use(
-	config => config,
+	res => {
+		if (res.data) {
+			res.data = objectToCamel(res.data);
+		}
+
+		return res;
+	},
 	async error => {
 		if (!(error instanceof AxiosError)) {
 			return Promise.reject(error);
@@ -38,7 +55,9 @@ api.interceptors.response.use(
 			req._retry = true;
 
 			try {
-				await refreshToken();
+				const token = await refreshToken();
+
+				saveAccessToken(token.access);
 
 				return api.request(req);
 			} catch (e) {

@@ -31,17 +31,17 @@ export const saveFormDraft = (
 		const sanitized = stripIgnoredFields(values, ignoreFields);
 		localStorage.setItem(getStorageKey(formName), JSON.stringify(sanitized));
 	} catch {
-		// Ignore storage errors (quota, private mode, etc.).
+		void 0;
 	}
 };
 
-export const loadFormDraft = <T extends FormValues>(formName: string) => {
+export const loadFormDraft = <T>(formName: string) => {
 	try {
 		const raw = localStorage.getItem(getStorageKey(formName));
 		if (!raw) {
 			return null;
 		}
-		return JSON.parse(raw) as Partial<T>;
+		return JSON.parse(raw) as T;
 	} catch {
 		return null;
 	}
