@@ -3,6 +3,7 @@ export const queryKeys = {
 		getMe: 'getMe',
 	},
 	products: {
-		get: 'getProducts',
+		get: ['products'],
+		my: ['products', 'my'],
 	},
 };

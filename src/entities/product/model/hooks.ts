@@ -8,16 +8,19 @@ import {
 	updateProduct,
 	type CreateProductReq,
 	type CreateProductRes,
+	type DeleteProductRes,
 	type GetProductsQuery,
 	type UpdateProductReq,
 	type UpdateProductRes,
 } from '../api';
 import { queryKeys } from '../../../shared/consts/queryKeys';
 import type { Id } from '../../../shared/types/global';
+import { useGetMe } from '../../user/model';
+import type { Product } from './types';
 
 export const useGetAllProducts = (options: GetProductsQuery) =>
 	useQuery({
-		queryKey: [queryKeys.products.get, options],
+		queryKey: [...queryKeys.products.get, options],
 		queryFn: ({ queryKey: [, args] }) => getProducts(args as GetProductsQuery),
 		refetchInterval: 1000 * 60 * 5,
 		retry: 1,
@@ -26,7 +29,7 @@ export const useGetAllProducts = (options: GetProductsQuery) =>
 
 export const useGetProductById = (id: Id) =>
 	useQuery({
-		queryKey: [queryKeys.products.get, id],
+		queryKey: [...queryKeys.products.get, id],
 		queryFn: ({ queryKey: [, id] }) => getProductById({ id: id as Id }),
 		retry: 1,
 		retryDelay: 1000 * 5,
@@ -42,9 +45,25 @@ export const useCreateProduct = (
 		retry: 1,
 		retryDelay: 1000,
 		onSuccess: res => {
-			qc.invalidateQueries({ queryKey: [queryKeys.products.get] });
 			onSuccess?.(res);
 		},
+		onMutate: async newProduct => {
+			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+
+			const prev = qc.getQueryData(queryKeys.products.my);
+
+			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
+				old
+					? [...old, { ...newProduct, id: Date.now() }]
+					: { ...newProduct, id: Date.now() },
+			);
+
+			return { prev };
+		},
+		onError: (_err, _newProduct, context) => {
+			qc.setQueryData(queryKeys.products.my, context?.prev);
+		},
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
 	});
 };
 
@@ -59,27 +78,66 @@ export const useUpdateProduct = (
 		retry: 1,
 		retryDelay: 1000,
 		onSuccess: res => {
-			qc.invalidateQueries({ queryKey: [queryKeys.products.get] });
 			onSuccess?.(res);
 		},
+		onMutate: async newProduct => {
+			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+
+			const prev = qc.getQueryData(queryKeys.products.my);
+
+			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
+				old
+					? [
+							...old.filter(p => p.id !== newProduct.id),
+							{ ...newProduct.dto, id: newProduct.id },
+						]
+					: { ...newProduct.dto, id: newProduct.id },
+			);
+
+			return { prev };
+		},
+		onError: (_err, _newProduct, context) => {
+			qc.setQueryData(queryKeys.products.my, context?.prev);
+		},
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
 	});
 };
 
-export const useDeleteProduct = () => {
+export const useDeleteProduct = (
+	onSuccess?: (res: DeleteProductRes) => void,
+) => {
 	const qc = useQueryClient();
 
 	return useMutation({
 		mutationFn: (id: Id) => deleteProduct({ id }),
 		retry: 1,
 		retryDelay: 1000,
-		onSuccess: () => {
-			qc.invalidateQueries({ queryKey: [queryKeys.products.get] });
+		onSuccess: res => {
+			onSuccess?.(res);
 		},
+		onMutate: async deletedProductId => {
+			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+
+			const prev = qc.getQueryData(queryKeys.products.my);
+
+			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
+				old ? [...old.filter(p => p.id !== deletedProductId)] : [],
+			);
+
+			return { prev };
+		},
+		onError: (_err, _newProduct, context) => {
+			qc.setQueryData(queryKeys.products.my, context?.prev);
+		},
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
 	});
 };
 
-export const useGetMyProducts = () =>
-	useQuery({
-		queryKey: [queryKeys.products.get, 'my-products'],
+export const useGetMyProducts = () => {
+	const { data: user } = useGetMe();
+	return useQuery({
+		queryKey: queryKeys.products.my,
 		queryFn: getMyProducts,
+		enabled: !!user,
 	});
+};

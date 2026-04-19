@@ -1,31 +1,29 @@
+import { useIsFetching } from '@tanstack/react-query';
 import type { Product } from '../../../entities/product/model';
-import type { Id } from '../../../shared/types/global';
 import ProductCard from '../../../shared/ui/productCard/ProductCard';
+import { queryKeys } from '../../../shared/consts/queryKeys';
+import { formatError } from './../../../shared/utils/error';
 
 type Props = {
 	products?: Product[];
-	isLoading: boolean;
-	isError: boolean;
-	errorMessage?: string | null;
+	error: Error | null;
 	selectedProduct?: Product | null;
 	deletingProduct?: Product | null;
 	onSelect: (product: Product) => void;
 	onDelete: (product: Product) => void;
-	userId: Id;
 };
 
 const ProductManagementList = ({
 	products,
-	isLoading,
-	isError,
-	errorMessage,
+	error,
 	selectedProduct,
 	deletingProduct,
 	onSelect,
 	onDelete,
-	userId,
 }: Props) => {
-	if (isLoading) {
+	const isFetching = useIsFetching({ queryKey: [...queryKeys.products.my] });
+
+	if (isFetching > 0 && !products) {
 		return (
 			<div className='grid grid-cols-1 gap-4 sm:grid-cols-2'>
 				{Array.from({ length: 4 }).map((_, index) => (
@@ -38,12 +36,12 @@ const ProductManagementList = ({
 		);
 	}
 
-	if (isError) {
+	if (error) {
 		return (
 			<div className='rounded-[18px] border border-dashed border-[rgba(255,107,53,0.5)] bg-white/80 p-6 text-sm text-[#0f172a]'>
 				<p>Не удалось загрузить список продуктов.</p>
 				<p className='text-xs text-slate-500'>
-					{errorMessage ?? 'Попробуйте позже.'}
+					{formatError(error, 'Попробуйте позже.')}
 				</p>
 			</div>
 		);
@@ -67,7 +65,7 @@ const ProductManagementList = ({
 					<article
 						key={product.id}
 						className={`rounded-[18px] border bg-white px-3 py-4 shadow-[0_14px_30px_-24px_rgba(15,23,42,0.3)] transition ${
-							isSelected
+							isSelected || isDeleting
 								? 'border-[rgba(255,107,53,0.8)]'
 								: 'border border-[rgba(15,23,42,0.08)]'
 						}
@@ -79,17 +77,15 @@ const ProductManagementList = ({
 								type='button'
 								className='inline-flex items-center justify-center gap-2 rounded-full border border-[rgba(15,23,42,0.2)] px-4 py-2 font-semibold text-[#0f172a] transition hover:border-[rgba(255,107,53,0.7)] hover:text-[#ff6b35] disabled:cursor-not-allowed disabled:opacity-60'
 								onClick={() => onSelect(product)}
-								disabled={isDeleting || userId !== product.ownerId}
 							>
-								{isSelected ? 'Редактируется' : 'Редактировать'}
+								Редактировать
 							</button>
 							<button
 								type='button'
 								className='inline-flex items-center justify-center gap-2 rounded-full border border-transparent bg-[rgba(255,107,53,0.1)] px-4 py-2 text-sm font-semibold text-[#ff6b35] transition hover:bg-[rgba(255,107,53,0.18)] disabled:cursor-not-allowed disabled:opacity-60'
 								onClick={() => onDelete(product)}
-								disabled={isDeleting || userId !== product.ownerId}
 							>
-								{isDeleting ? 'Удаление...' : 'Удалить'}
+								Удалить
 							</button>
 						</div>
 					</article>

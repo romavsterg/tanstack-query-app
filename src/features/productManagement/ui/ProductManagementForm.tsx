@@ -8,6 +8,7 @@ import {
 } from '../../../entities/product/model';
 import type { Id } from '../../../shared/types/global';
 import { formatError } from '../../../shared/utils/error';
+import { saveFormDraft } from '../../../shared/utils/formStorage';
 
 export type ProductFormValue = CreateProductReq;
 
@@ -40,25 +41,37 @@ const ProductManagementForm = ({
 		reset(initialValues);
 	}, [initialValues, reset]);
 
+	const handleSuccess = () => {
+		onSuccess?.();
+
+		saveFormDraft<CreateProductReq>('product-management-create', {
+			name: '',
+			price: 1,
+			isPublic: true,
+		});
+	};
+
 	const { mutate: createProduct, error: createError } =
-		useCreateProduct(onSuccess);
+		useCreateProduct(handleSuccess);
 	const { mutate: updateProduct, error: updateError } =
-		useUpdateProduct(onSuccess);
+		useUpdateProduct(handleSuccess);
 
 	const error = mode === 'create' ? createError : updateError;
+
+	const onSubmit = (data: CreateProductReq) => {
+		if (mode === 'create') {
+			createProduct(data);
+		} else {
+			updateProduct({ id: id as Id, dto: data });
+		}
+	};
 
 	return (
 		<Form
 			className={'grid gap-4'}
 			formName={`product-management-${mode}`}
 			form={form}
-			onSubmit={data =>
-				(data satisfies CreateProductReq)
-					? mode === 'create'
-						? createProduct(data)
-						: updateProduct({ id: id as Id, dto: data })
-					: void 0
-			}
+			onSubmit={onSubmit}
 		>
 			<label className='grid gap-2 text-sm'>
 				<span className='font-semibold text-[#0f172a]'>Название</span>
@@ -80,7 +93,7 @@ const ProductManagementForm = ({
 				<span className='font-semibold text-[#0f172a]'>Цена (₽)</span>
 				<input
 					type='number'
-					min={0}
+					min={1}
 					step={1}
 					placeholder='1000'
 					className='rounded-[14px] border border-[rgba(15,23,42,0.14)] bg-white/90 px-4 py-3 text-sm text-[#0f172a] placeholder:text-slate-400 transition focus:border-[rgba(255,107,53,0.5)] focus:outline-none focus:ring-4 focus:ring-[rgba(255,107,53,0.12)] disabled:bg-slate-100/80 disabled:text-slate-500'
@@ -89,8 +102,8 @@ const ProductManagementForm = ({
 						required: 'Введите цену',
 						valueAsNumber: true,
 						min: {
-							value: 0,
-							message: 'Цена не может быть отрицательной',
+							value: 1,
+							message: 'Цена не может быть отрицательной или меньше 1',
 						},
 					})}
 				/>

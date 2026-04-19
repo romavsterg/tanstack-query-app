@@ -2,8 +2,8 @@ type FormValues = Record<string, unknown>;
 
 const getStorageKey = (formName: string) => `form:${formName}`;
 
-const stripIgnoredFields = (
-	values: FormValues,
+const stripIgnoredFields = <T extends object>(
+	values: T,
 	ignoreFields: string[] = [],
 ) => {
 	const result: FormValues = {};
@@ -22,9 +22,9 @@ const stripIgnoredFields = (
 	return result;
 };
 
-export const saveFormDraft = (
+export const saveFormDraft = <T extends object>(
 	formName: string,
-	values: FormValues,
+	values: T,
 	ignoreFields: string[] = [],
 ) => {
 	try {
@@ -35,7 +35,7 @@ export const saveFormDraft = (
 	}
 };
 
-export const loadFormDraft = <T>(formName: string) => {
+export const loadFormDraft = <T extends object>(formName: string) => {
 	try {
 		const raw = localStorage.getItem(getStorageKey(formName));
 		if (!raw) {

@@ -1,26 +1,19 @@
 import { useState } from 'react';
 import {
 	useDeleteProduct,
-	useGetAllProducts,
+	useGetMyProducts,
 	type Product,
 } from '../../../entities/product/model';
-import { formatError } from '../../../shared/utils/error';
 import ProductManagementList from '../../../features/productManagement/ui/ProductManagementList';
 import ProductManagementForm, {
 	type ProductFormValue,
 } from '../../../features/productManagement/ui/ProductManagementForm';
-import { useGetMe } from '../../../entities/user/model';
 import { loadFormDraft } from '../../../shared/utils/formStorage';
 import Popup from '../../../shared/ui/popup';
+import type { CreateProductReq } from '../../../entities/product/api';
 
 const ProductManagement = () => {
-	const { data: user, isLoading: userLoading } = useGetMe();
-	const {
-		data: products,
-		isLoading,
-		isError,
-		error: listError,
-	} = useGetAllProducts({ limit: 8 });
+	const { data: products, error: listError } = useGetMyProducts();
 
 	const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
 	const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
@@ -33,28 +26,16 @@ const ProductManagement = () => {
 	const { mutate: deleteProduct, isPending: deletePending } =
 		useDeleteProduct();
 
-	const initialFormValues = (() => {
-		if (selectedProduct) {
-			return selectedProduct;
-		}
-
-		if (createProductDraft) {
-			return createProductDraft;
-		}
-
-		return {
+	const initialFormValues: CreateProductReq = selectedProduct ||
+		createProductDraft || {
 			name: '',
-			price: 0,
+			price: 1,
 			isPublic: true,
 		};
-	})();
 
 	const handleStartEdit = (product: Product) => {
-		if (product?.ownerId !== user?.id || userLoading) {
-			return;
-		}
-
 		setSelectedProduct(product);
+		setDeletingProduct(null);
 		setIsFormOpen(true);
 	};
 
@@ -65,6 +46,7 @@ const ProductManagement = () => {
 
 	const handleCloseForm = () => {
 		setSelectedProduct(null);
+		setDeletingProduct(null);
 		setIsFormOpen(false);
 	};
 
@@ -94,18 +76,11 @@ const ProductManagement = () => {
 				</div>
 				<ProductManagementList
 					products={products}
-					isLoading={isLoading}
-					isError={isError}
-					errorMessage={formatError(listError, '')}
+					error={listError}
 					selectedProduct={selectedProduct}
 					deletingProduct={deletingProduct}
 					onSelect={handleStartEdit}
-					onDelete={(product: Product) => {
-						if (product?.ownerId === user?.id && !userLoading)
-							setDeletingProduct(product);
-						setIsFormOpen(false);
-					}}
-					userId={user?.id || -1}
+					onDelete={setDeletingProduct}
 				/>
 			</div>
 			{isFormOpen && (
@@ -121,7 +96,7 @@ const ProductManagement = () => {
 						id={selectedProduct?.id}
 						mode={selectedProduct ? 'update' : 'create'}
 						onCancel={handleCloseForm}
-						onSuccess={() => setIsFormOpen(false)}
+						onSuccess={handleCloseForm}
 					/>
 				</Popup>
 			)}

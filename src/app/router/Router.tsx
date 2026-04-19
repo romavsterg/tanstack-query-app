@@ -4,7 +4,6 @@ import HomePage from '../../pages/home/ui';
 import ProductsPage from '../../pages/products/ui';
 import LoginPage from '../../pages/login/ui';
 import RegisterPage from '../../pages/register/ui';
-import CreateProductPage from '../../pages/createProductPage/ui';
 import ProductManagementPage from '../../pages/productManagement/ui';
 
 export const router = createBrowserRouter([
@@ -23,10 +22,6 @@ export const router = createBrowserRouter([
 			{
 				path: '/register',
 				element: <RegisterPage />,
-			},
-			{
-				path: '/create-product',
-				element: <CreateProductPage />,
 			},
 			{
 				path: '/manage-products',
