@@ -8,6 +8,16 @@ export default defineConfig({
 	build: {
 		outDir: 'build',
 	},
+	resolve: {
+		alias: {
+			'@/shared': '/src/shared',
+			'@/entities': '/src/entities',
+			'@/features': '/src/features',
+			'@/widgets': '/src/widgets',
+			'@/pages': '/src/pages',
+			'@/app': '/src/app',
+		},
+	},
 	server: {
 		port: 3000,
 		strictPort: true,

@@ -21,7 +21,7 @@ export interface CreateProductReq {
 export type CreateProductRes = Product;
 
 export interface UpdateProductParams {
-	id: ID;
+	id: Id;
 }
 export interface UpdateProductReq {
 	name?: string;

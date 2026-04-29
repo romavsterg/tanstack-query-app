@@ -18,10 +18,11 @@ import type { Id } from '../../../shared/types/global';
 import { useGetMe } from '../../user/model';
 import type { Product } from './types';
 
-export const useGetAllProducts = (options: GetProductsQuery) =>
+export const useGetProducts = (options: GetProductsQuery) =>
 	useQuery({
-		queryKey: [...queryKeys.products.get, options],
-		queryFn: ({ queryKey: [, args] }) => getProducts(args as GetProductsQuery),
+		queryKey: queryKeys.products.list(options),
+		queryFn: ({ queryKey: [, _, args] }) =>
+			getProducts(args as GetProductsQuery),
 		refetchInterval: 1000 * 60 * 5,
 		retry: 1,
 		retryDelay: 1000 * 5,
@@ -29,8 +30,8 @@ export const useGetAllProducts = (options: GetProductsQuery) =>
 
 export const useGetProductById = (id: Id) =>
 	useQuery({
-		queryKey: [...queryKeys.products.get, id],
-		queryFn: ({ queryKey: [, id] }) => getProductById({ id: id as Id }),
+		queryKey: queryKeys.products.detail(id),
+		queryFn: ({ queryKey: [, _, id] }) => getProductById({ id: id as Id }),
 		retry: 1,
 		retryDelay: 1000 * 5,
 	});
@@ -55,7 +56,7 @@ export const useCreateProduct = (
 			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
 				old
 					? [...old, { ...newProduct, id: Date.now() }]
-					: { ...newProduct, id: Date.now() },
+					: [{ ...newProduct, id: Date.now() }],
 			);
 
 			return { prev };
@@ -63,7 +64,7 @@ export const useCreateProduct = (
 		onError: (_err, _newProduct, context) => {
 			qc.setQueryData(queryKeys.products.my, context?.prev);
 		},
-		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.all }),
 	});
 };
 
@@ -85,13 +86,10 @@ export const useUpdateProduct = (
 
 			const prev = qc.getQueryData(queryKeys.products.my);
 
-			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
-				old
-					? [
-							...old.filter(p => p.id !== newProduct.id),
-							{ ...newProduct.dto, id: newProduct.id },
-						]
-					: { ...newProduct.dto, id: newProduct.id },
+			qc.setQueryData(queryKeys.products.my, (prev: Product[]) =>
+				prev.map(p =>
+					p.id === newProduct.id ? { ...p, ...newProduct.dto } : p,
+				),
 			);
 
 			return { prev };
@@ -99,7 +97,6 @@ export const useUpdateProduct = (
 		onError: (_err, _newProduct, context) => {
 			qc.setQueryData(queryKeys.products.my, context?.prev);
 		},
-		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
 	});
 };
 
@@ -129,7 +126,7 @@ export const useDeleteProduct = (
 		onError: (_err, _newProduct, context) => {
 			qc.setQueryData(queryKeys.products.my, context?.prev);
 		},
-		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.my }),
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.all }),
 	});
 };
 

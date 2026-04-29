@@ -1,8 +1,19 @@
-﻿import { useGetAllProducts } from '../../../entities/product/model';
+﻿import { useSearchParams } from 'react-router';
+import { useGetProducts } from '../../../entities/product/model';
 import ProductCard from '../../../shared/ui/productCard/ProductCard';
+import { useDebounce } from '../../../shared/lib/debounce';
 
 const ProductsList = () => {
-	const { data: products, isLoading, error, isError } = useGetAllProducts({});
+	const params = useSearchParams()[0];
+
+	const debouncedParams = useDebounce(params, 200);
+
+	const {
+		data: products,
+		isLoading,
+		error,
+		isError,
+	} = useGetProducts({ search: debouncedParams.get('search') || undefined });
 
 	if (isLoading) {
 		return (
@@ -29,7 +40,7 @@ const ProductsList = () => {
 	if (!products || products.length === 0) {
 		return (
 			<div className='rounded-2xl border border-dashed border-slate-300 bg-white/80 p-6 text-slate-500'>
-				Каталог скоро наполнится. Загляните чуть позже.
+				Товары не найдены.
 			</div>
 		);
 	}

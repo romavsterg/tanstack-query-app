@@ -1,4 +1,4 @@
-import type { OkRes } from '../../../shared/types/global';
+import type { Id, OkRes } from '../../../shared/types/global';
 import type { User } from '../model';
 
 export interface JwtPayload {
