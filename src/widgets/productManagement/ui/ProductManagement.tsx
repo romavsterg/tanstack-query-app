@@ -75,7 +75,7 @@ const ProductManagement = () => {
 					</button>
 				</div>
 				<ProductManagementList
-					products={products}
+					products={products?.items}
 					error={listError}
 					selectedProduct={selectedProduct}
 					deletingProduct={deletingProduct}

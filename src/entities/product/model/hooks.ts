@@ -9,6 +9,7 @@ import {
 	type CreateProductReq,
 	type CreateProductRes,
 	type DeleteProductRes,
+	type GetMyProductsQuery,
 	type GetProductsQuery,
 	type UpdateProductReq,
 	type UpdateProductRes,
@@ -49,11 +50,11 @@ export const useCreateProduct = (
 			onSuccess?.(res);
 		},
 		onMutate: async newProduct => {
-			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+			await qc.cancelQueries({ queryKey: queryKeys.products.my() });
 
-			const prev = qc.getQueryData(queryKeys.products.my);
+			const prev = qc.getQueryData(queryKeys.products.my());
 
-			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
+			qc.setQueryData(queryKeys.products.my(), (old: Product[]) =>
 				old
 					? [...old, { ...newProduct, id: Date.now() }]
 					: [{ ...newProduct, id: Date.now() }],
@@ -62,7 +63,7 @@ export const useCreateProduct = (
 			return { prev };
 		},
 		onError: (_err, _newProduct, context) => {
-			qc.setQueryData(queryKeys.products.my, context?.prev);
+			qc.setQueryData(queryKeys.products.my(), context?.prev);
 		},
 		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.all }),
 	});
@@ -82,11 +83,11 @@ export const useUpdateProduct = (
 			onSuccess?.(res);
 		},
 		onMutate: async newProduct => {
-			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+			await qc.cancelQueries({ queryKey: queryKeys.products.my() });
 
-			const prev = qc.getQueryData(queryKeys.products.my);
+			const prev = qc.getQueryData(queryKeys.products.my());
 
-			qc.setQueryData(queryKeys.products.my, (prev: Product[]) =>
+			qc.setQueryData(queryKeys.products.my(), (prev: Product[]) =>
 				prev.map(p =>
 					p.id === newProduct.id ? { ...p, ...newProduct.dto } : p,
 				),
@@ -95,8 +96,9 @@ export const useUpdateProduct = (
 			return { prev };
 		},
 		onError: (_err, _newProduct, context) => {
-			qc.setQueryData(queryKeys.products.my, context?.prev);
+			qc.setQueryData(queryKeys.products.my(), context?.prev);
 		},
+		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.all }),
 	});
 };
 
@@ -113,28 +115,29 @@ export const useDeleteProduct = (
 			onSuccess?.(res);
 		},
 		onMutate: async deletedProductId => {
-			await qc.cancelQueries({ queryKey: queryKeys.products.my });
+			await qc.cancelQueries({ queryKey: queryKeys.products.my() });
 
-			const prev = qc.getQueryData(queryKeys.products.my);
+			const prev = qc.getQueryData(queryKeys.products.my());
 
-			qc.setQueryData(queryKeys.products.my, (old: Product[]) =>
+			qc.setQueryData(queryKeys.products.my(), (old: Product[]) =>
 				old ? [...old.filter(p => p.id !== deletedProductId)] : [],
 			);
 
 			return { prev };
 		},
 		onError: (_err, _newProduct, context) => {
-			qc.setQueryData(queryKeys.products.my, context?.prev);
+			qc.setQueryData(queryKeys.products.my(), context?.prev);
 		},
 		onSettled: () => qc.invalidateQueries({ queryKey: queryKeys.products.all }),
 	});
 };
 
-export const useGetMyProducts = () => {
+export const useGetMyProducts = (options?: GetMyProductsQuery) => {
 	const { data: user } = useGetMe();
 	return useQuery({
-		queryKey: queryKeys.products.my,
-		queryFn: getMyProducts,
+		queryKey: queryKeys.products.my(options),
+		queryFn: ({ queryKey: [, _, args] }) =>
+			getMyProducts(args as GetProductsQuery),
 		enabled: !!user,
 	});
 };

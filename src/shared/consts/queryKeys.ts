@@ -9,6 +9,6 @@ export const queryKeys = {
 		all: ['products'],
 		list: (params?: GetProductsQuery) => ['products', 'list', params],
 		detail: (id: Id) => ['products', 'detail', id],
-		my: ['products', 'my'],
+		my: (params?: GetProductsQuery) => ['products', 'my', params],
 	},
 };

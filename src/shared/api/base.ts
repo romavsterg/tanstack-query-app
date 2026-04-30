@@ -1,6 +1,5 @@
 import axios, { AxiosError } from 'axios';
 import { getAccessToken, saveAccessToken } from '../utils/accessToken';
-import { refreshToken } from '../../entities/user/api';
 import { objectToCamel, objectToSnake } from 'ts-case-convert';
 
 export const api = axios.create({
@@ -55,7 +54,9 @@ api.interceptors.response.use(
 			req._retry = true;
 
 			try {
-				const token = await refreshToken();
+				const { data: token } = await authApi.post<{
+					access: string;
+				}>('/auth/refresh');
 
 				saveAccessToken(token.access);
 

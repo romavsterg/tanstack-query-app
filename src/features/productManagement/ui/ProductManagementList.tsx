@@ -21,7 +21,7 @@ const ProductManagementList = ({
 	onSelect,
 	onDelete,
 }: Props) => {
-	const isFetching = useIsFetching({ queryKey: [...queryKeys.products.my] });
+	const isFetching = useIsFetching({ queryKey: [...queryKeys.products.my()] });
 
 	if (isFetching > 0 && !products) {
 		return (

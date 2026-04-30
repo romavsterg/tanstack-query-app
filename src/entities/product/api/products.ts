@@ -3,23 +3,26 @@ import type {
 	CreateProductReq,
 	CreateProductRes,
 	DeleteProductRes,
-	GetAllProductRes,
+	GetProductRes,
 	GetProductParams,
 	GetProductsQuery,
 	UpdateProductParams,
 	UpdateProductReq,
 	UpdateProductRes,
+	GetMyProductsRes,
+	GetProductsRes,
+	GetMyProductsQuery,
 } from './types';
 
 export const getProducts = async (query: GetProductsQuery) => {
-	const { data } = await api.get<GetAllProductRes>('/products', {
+	const { data } = await api.get<GetProductsRes>('/products', {
 		params: query,
 	});
 	return data;
 };
 
 export const getProductById = async (params: GetProductParams) => {
-	const { data } = await api.get<GetAllProductRes>(`/products/${params.id}`);
+	const { data } = await api.get<GetProductRes>(`/products/${params.id}`);
 	return data;
 };
 
@@ -44,7 +47,9 @@ export const deleteProduct = async (params: GetProductParams) => {
 	return data;
 };
 
-export const getMyProducts = async () => {
-	const { data } = await api.get<GetAllProductRes>('/my-products');
+export const getMyProducts = async (query: GetMyProductsQuery) => {
+	const { data } = await api.get<GetMyProductsRes>('/my-products', {
+		params: query,
+	});
 	return data;
 };

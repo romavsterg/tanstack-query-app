@@ -37,7 +37,7 @@ const ProductsList = () => {
 		);
 	}
 
-	if (!products || products.length === 0) {
+	if (!products || products.items.length === 0) {
 		return (
 			<div className='rounded-2xl border border-dashed border-slate-300 bg-white/80 p-6 text-slate-500'>
 				Товары не найдены.
@@ -47,7 +47,7 @@ const ProductsList = () => {
 
 	return (
 		<div className='grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3'>
-			{products.map(product => (
+			{products.items.map(product => (
 				<ProductCard key={product.id} product={product} />
 			))}
 		</div>

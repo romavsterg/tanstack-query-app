@@ -3,10 +3,17 @@ import type { Product } from '../model';
 
 export interface GetProductsQuery {
 	search?: string;
+	page?: number;
 	limit?: number;
-	offset?: number;
 }
-export type GetAllProductRes = Product[];
+export interface GetProductsRes {
+	items: Product[];
+	page: number;
+	limit: number;
+	total: number;
+	totalPages: number;
+	hasNextPage: boolean;
+}
 
 export interface GetProductParams {
 	id: Id;
@@ -31,9 +38,9 @@ export interface UpdateProductReq {
 export type UpdateProductRes = Product;
 
 export interface DeleteProductParams {
-	id: ID;
+	id: Id;
 }
 export type DeleteProductRes = OkRes;
 
-export type GetMyProductsReq = void;
-export type GetMyProductsRes = Product[];
+export type GetMyProductsQuery = GetProductsQuery;
+export type GetMyProductsRes = GetProductsRes;
