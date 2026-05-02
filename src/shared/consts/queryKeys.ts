@@ -1,4 +1,4 @@
-import type { GetProductsQuery } from '../../entities/product/api';
+import type { GetProductsQuery } from '../../entities/product/';
 import type { Id } from '../types/global';
 
 export const queryKeys = {

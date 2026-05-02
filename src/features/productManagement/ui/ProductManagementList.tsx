@@ -1,5 +1,5 @@
 import { useIsFetching } from '@tanstack/react-query';
-import type { Product } from '../../../entities/product/model';
+import type { Product } from '../../../entities/product/';
 import ProductCard from '../../../shared/ui/productCard/ProductCard';
 import { queryKeys } from '../../../shared/consts/queryKeys';
 import { formatError } from './../../../shared/utils/error';

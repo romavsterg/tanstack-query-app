@@ -1,4 +1,5 @@
 ﻿import ProductSearch from '../../../features/productSearch';
+import ProductPagination from '../../../features/productPagination';
 import ProductsList from '../../../widgets/productsList/ui';
 
 const ProductsPage = () => {
@@ -21,6 +22,7 @@ const ProductsPage = () => {
 					<ProductSearch />
 				</div>
 				<ProductsList />
+				<ProductPagination />
 			</div>
 		</section>
 	);

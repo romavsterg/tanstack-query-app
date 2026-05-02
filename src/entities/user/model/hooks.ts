@@ -57,6 +57,5 @@ export const useGetMe = () =>
 		queryFn: getMe,
 		queryKey: [queryKeys.user.getMe],
 		staleTime: 1000 * 15,
-		refetchInterval: 1000 * 15 * 60,
 		retry: reqAuthRetries,
 	});

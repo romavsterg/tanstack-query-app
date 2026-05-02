@@ -1,11 +1,8 @@
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import Form from '../../../shared/ui/form';
-import type { CreateProductReq } from '../../../entities/product/api';
-import {
-	useCreateProduct,
-	useUpdateProduct,
-} from '../../../entities/product/model';
+import type { CreateProductReq } from '../../../entities/product/';
+import { useCreateProduct, useUpdateProduct } from '../../../entities/product/';
 import type { Id } from '../../../shared/types/global';
 import { formatError } from '../../../shared/utils/error';
 import { saveFormDraft } from '../../../shared/utils/formStorage';

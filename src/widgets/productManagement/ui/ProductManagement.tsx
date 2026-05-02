@@ -3,14 +3,14 @@ import {
 	useDeleteProduct,
 	useGetMyProducts,
 	type Product,
-} from '../../../entities/product/model';
+} from '../../../entities/product/';
 import ProductManagementList from '../../../features/productManagement/ui/ProductManagementList';
 import ProductManagementForm, {
 	type ProductFormValue,
 } from '../../../features/productManagement/ui/ProductManagementForm';
 import { loadFormDraft } from '../../../shared/utils/formStorage';
 import Popup from '../../../shared/ui/popup';
-import type { CreateProductReq } from '../../../entities/product/api';
+import type { CreateProductReq } from '../../../entities/product/';
 
 const ProductManagement = () => {
 	const { data: products, error: listError } = useGetMyProducts();

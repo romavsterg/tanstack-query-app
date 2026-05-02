@@ -1,19 +1,8 @@
-﻿import { useSearchParams } from 'react-router';
-import { useGetProducts } from '../../../entities/product/model';
+﻿import { useProductsList } from '../../../entities/product/';
 import ProductCard from '../../../shared/ui/productCard/ProductCard';
-import { useDebounce } from '../../../shared/lib/debounce';
 
 const ProductsList = () => {
-	const params = useSearchParams()[0];
-
-	const debouncedParams = useDebounce(params, 200);
-
-	const {
-		data: products,
-		isLoading,
-		error,
-		isError,
-	} = useGetProducts({ search: debouncedParams.get('search') || undefined });
+	const { data: products, isLoading, error, isError } = useProductsList(true);
 
 	if (isLoading) {
 		return (
