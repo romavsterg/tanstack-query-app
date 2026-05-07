@@ -1,5 +1,6 @@
 import { useSearchParams } from 'react-router';
 import { useDebounce } from './debounce';
+import { useMemo } from 'react';
 
 export const useProductsParams = () => {
 	const params = useSearchParams()[0];
@@ -11,5 +12,8 @@ export const useProductsParams = () => {
 	const page = Number.isFinite(pageParam) && pageParam > 0 ? pageParam : 1;
 	const limit = Number.isFinite(limitParam) && limitParam > 0 ? limitParam : 6;
 
-	return { page, limit, search: debouncedSearch || undefined };
+	return useMemo(
+		() => ({ page, limit, search: debouncedSearch || undefined }),
+		[page, limit, debouncedSearch],
+	);
 };

@@ -1,4 +1,4 @@
-import { type QueryClient } from '@tanstack/react-query';
+import type { QueryClient, QueryFilters } from '@tanstack/react-query';
 import { queryKeys } from '../consts/queryKeys';
 import type {
 	CreateProductReq,
@@ -7,17 +7,21 @@ import type {
 } from '../../entities/product';
 import type { Id } from '../types/global';
 
+const queryKeyFilter: QueryFilters = {
+	queryKey: queryKeys.products.all,
+	predicate: ({ queryKey }) => queryKey.find(key => key === 'my') === undefined,
+};
+
 export const onOptimisticProductsMutate = async (
 	qc: QueryClient,
 	handleNewData: (prev: GetProductsRes | undefined) => GetProductsRes,
 ) => {
-	await qc.cancelQueries({ queryKey: queryKeys.products.all });
+	await qc.cancelQueries(queryKeyFilter);
 
-	const prev = qc.getQueriesData({ queryKey: queryKeys.products.all });
+	const prev = qc.getQueriesData(queryKeyFilter);
 
-	qc.setQueriesData(
-		{ queryKey: queryKeys.products.all },
-		(prevData: GetProductsRes | undefined) => handleNewData(prevData),
+	qc.setQueriesData(queryKeyFilter, (prevData: GetProductsRes | undefined) =>
+		handleNewData(prevData),
 	);
 
 	return { prev };
@@ -33,7 +37,7 @@ export const onOptimisticProductsError = (
 };
 
 export const onOptimisticProductsSettled = (qc: QueryClient) =>
-	qc.invalidateQueries({ queryKey: queryKeys.products.all });
+	qc.invalidateQueries(queryKeyFilter);
 
 const emptyPrevData = {
 	items: [],
@@ -96,7 +100,10 @@ export const handleDeleteProductPrevData = (
 		? {
 				...prevData,
 				items: prevData.items.filter(p => p.id !== deletedProductId),
-				page: prevData.items.length > 1 ? prevData.page : prevData.page - 1,
+				page: Math.max(
+					1,
+					prevData.items.length > 1 ? prevData.page : prevData.page - 1,
+				),
 				total: prevData.total - 1,
 				totalPages: Math.ceil((prevData.total - 1) / 6),
 				hasNextPage: prevData.page < Math.ceil((prevData.total - 1) / 6),

@@ -58,7 +58,7 @@ const ProductPagination = () => {
 			<button
 				type='button'
 				onClick={() => updatePage(currentPage - 1)}
-				disabled={currentPage <= 1}
+				disabled={!prevData || currentPage <= 1}
 				className='rounded-md border border-slate-300 bg-white px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'
 			>
 				Предыдущая
@@ -70,7 +70,7 @@ const ProductPagination = () => {
 			<button
 				type='button'
 				onClick={() => updatePage(currentPage + 1)}
-				disabled={hasNextPage === false}
+				disabled={!prevData || hasNextPage === false}
 				className='rounded-md border border-slate-300 bg-white px-3 py-1.5 disabled:cursor-not-allowed disabled:opacity-50'
 			>
 				Следующая
